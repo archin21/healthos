@@ -1,0 +1,554 @@
+# HealthOS — Complete Replit Build Specification
+## Hackathon Prototype | UI Shell + Minimal Backend | B2C HealthTech
+
+---
+
+## 0. PRODUCT OVERVIEW
+
+**Product Name:** HealthOS  
+**Tagline:** "Your health, finally decoded."  
+**Core Concept:** A unified health intelligence platform that standardises lab reports across Indian diagnostic labs, tracks health trends over time, screens for mental health, and helps users find affordable generic medicine alternatives.  
+**Target User:** Indian urban professional, 25–50, who gets annual health checks but can't meaningfully interpret or compare their reports.  
+**Business Model:** B2C Subscription (Freemium — 1 report free, subscription for trends + mental health + medicine tab)  
+**Build Mode:** UI Shell first. Minimal backend. Prioritise visual polish over working functionality. This is a hackathon demo for internal ISB judges.
+
+---
+
+## 1. TECH STACK
+
+| Layer | Choice |
+|-------|--------|
+| Frontend | React + Vite + Tailwind + shadcn/ui |
+| Backend | Supabase (DB + Auth + Storage) — minimal usage |
+| AI Parsing | Claude API (multimodal) — mock for prototype |
+| Charts | Recharts |
+| Hosting | Replit (primary) + Vercel (backup) |
+| Icons | Lucide React |
+
+**IMPORTANT FOR BUILD:** This is a UI shell prototype. Do NOT implement real OCR, real AI parsing, or real Supabase calls in the first pass. Use hardcoded mock data that looks realistic. The Ranjeet Oak report (Medanta, April 2025) is the reference patient — all mock data should reflect his actual results so it looks credible in a demo.
+
+---
+
+## 2. DESIGN SYSTEM
+
+- **Primary colour:** #0EA5E9 (sky blue — health, clarity)
+- **Success/Healthy:** #22C55E (green)
+- **Warning/Low Risk:** #EAB308 (amber)
+- **Danger/High Risk:** #EF4444 (red)
+- **Neutral:** #64748B (slate)
+- **Background:** #F8FAFC (near white)
+- **Card background:** #FFFFFF
+- **Font:** Inter (system default via Tailwind)
+- **Border radius:** rounded-xl throughout
+- **Shadow:** shadow-sm on cards, shadow-md on modals
+- **Style:** Clean, medical-grade but approachable. Think Practo meets Linear. No gradients except on the hero. Generous whitespace.
+
+---
+
+## 3. PAGE ARCHITECTURE (7 Screens)
+
+### Screen 1: Landing Page (`/`)
+### Screen 2: Dashboard (`/dashboard`)
+### Screen 3: Report Detail — Smart Summary (`/report/:id`)
+### Screen 4: Trends (`/trends`)
+### Screen 5: Mental Health (`/mental-health`)
+### Screen 6: Medicine Alternatives (`/medicines`)
+### Screen 7: Profile (`/profile`)
+
+Navigation: Persistent left sidebar on desktop, bottom tab bar on mobile. Always visible after login.
+
+Sidebar items (with Lucide icons):
+- Dashboard (LayoutDashboard)
+- My Reports (FileText)
+- Trends (TrendingUp)
+- Mental Health (Brain)
+- Medicines (Pill)
+- Profile (User)
+
+---
+
+## 4. SCREEN-BY-SCREEN SPECIFICATION
+
+---
+
+### SCREEN 1: LANDING PAGE (`/`)
+
+**Layout:** Full-width, single scroll page. No sidebar.
+
+**Section 1 — Hero**
+- Headline: "Your health reports, finally decoded."
+- Subheadline: "HealthOS standardises lab reports from any Indian diagnostic lab, tracks your health over time, and tells you what actually matters — in plain English."
+- Two CTAs: "Upload Your Report" (primary, sky blue) | "See a Demo" (secondary, outlined)
+- Background: Very subtle light blue gradient, no stock photos
+
+**Section 2 — Problem Statement (3 cards)**
+Card 1: "Same test, different numbers" — SRL calls it 'Hb', Thyrocare calls it 'Hemoglobin (HB)', Medanta calls it 'HAEMOGLOBIN'. You can't compare them. We can.
+Card 2: "Reports that nobody reads" — A 12-page lab PDF with no context. HealthOS converts it into a 60-second health briefing.
+Card 3: "Generic drugs you never knew existed" — That branded medicine costs ₹800. The generic with the same salt costs ₹45. We find it for you.
+
+**Section 3 — Product Feature Strip (4 icons + labels)**
+- Standardises 260+ parameters across 6 major Indian lab chains
+- Health Score validated across 1,000+ reports
+- Mental health screening with PHQ-9, GAD-7, PSS, DASS-21
+- Generic medicine finder with salt-level matching
+
+**Section 4 — Simple CTA footer**
+"Start for free. No credit card required." → Sign Up button
+
+---
+
+### SCREEN 2: DASHBOARD (`/dashboard`)
+
+**Mock user:** Ranjeet Oak, Male, 52yr
+
+**Layout:** Two-column grid on desktop, single column on mobile.
+
+**Top bar:**
+- "Good morning, Ranjeet" with today's date
+- "Upload New Report" button (primary, top right)
+
+**Left column (wider):**
+
+*Health Score Card (large)*
+- Big gauge/donut chart: 73/100
+- Label: "Moderate Risk"
+- Subtext: "Based on your most recent report — Medanta, 2 Apr 2025"
+- Small delta: "↓ 3 points from last report (Feb 2024)"
+- Colour: amber (73 falls in moderate risk band)
+
+*Recent Reports List*
+- Each report as a row card: Lab logo placeholder | Date | Lab Name | Health Score badge | "View" button
+- Mock data: 3 reports — Medanta Apr 2025 (73), Medanta May 2023 (81), Medanta Aug 2021 (78)
+
+**Right column (narrower):**
+
+*Quick Alerts Card*
+- Title: "Needs Attention"
+- 2 items from mock data:
+  - 🔴 Blood Glucose (FBS): 104.1 mg/dL — Low Risk (above normal range)
+  - 🟡 Serum Globulin: 2.30 g/dL — Low Risk
+- "View Full Report" link
+
+*Mental Health Snapshot Card*
+- Title: "Mental Health Check"
+- Subtext: "Last completed: Never"
+- CTA: "Take Assessment" button → navigates to /mental-health
+- Small icons for PHQ-9, GAD-7, PSS, DASS-21
+
+*Medicine Finder Card*
+- Title: "Find Generic Alternatives"
+- Subtext: "Enter a medicine name to find affordable alternatives with the same active ingredient"
+- Input field: "e.g. Crocin, Metformin, Atorvastatin"
+- Button: "Search" → navigates to /medicines
+
+---
+
+### SCREEN 3: REPORT DETAIL — SMART SUMMARY (`/report/:id`)
+
+**Mock report:** Ranjeet Oak, Medanta, 2 Apr 2025
+
+**Layout:** Full width, scrollable. No secondary column.
+
+**Header Section:**
+- Patient: Ranjeet Oak | Male, 52yr | Booking ID: 660451
+- Lab: Medanta, Cybercity | Date: 2 Apr 2025
+- Health Score: Large badge "73 / 100 — Moderate Risk" in amber
+
+**Health Risk Metric Bar:**
+- Horizontal colour bar: Red | Amber | Yellow | Green
+- Markers showing: 0 High Risk params | 0 Medium Risk | 1 Low Risk | 21 Healthy
+- Caption: "21 of 22 parameters within healthy range"
+
+**Highlights Banner (collapsible):**
+- Only show if infectious disease flags exist. For Ranjeet: hide this section (no infectious flags in his report).
+
+**Test Profile Cards (grid, 2-col on desktop):**
+Each card shows:
+- Test category name
+- Profile score + risk badge
+- "X parameters | Y out of range"
+- Expand arrow
+
+Mock cards (from Ranjeet's actual report):
+1. Complete Blood Count — Healthy (94/100) — 8 params, 0 out of range
+2. Liver Function Test — Healthy (91/100) — 10 params, 1 out of range (Globulin)
+3. Kidney Function Test — Unable to assess (threshold not met)
+4. Electrolyte Panel — Healthy (96/100) — 3 params, 0 out of range
+5. Blood Glucose Level — Low Risk (85/100) — 1 param, 1 out of range (FBS: 104.1)
+6. Thyroid Profile — Healthy (93/100) — 3 params, 0 out of range
+7. Lipid Profile — Healthy (95/100) — 6 params, 0 out of range
+8. Vitamin D 25-Hydroxy — Moderate Risk (76/100) — 1 param, 0 out of range (score driven by profile weightage)
+9. Vitamin B12 — Unable to assess
+10. Cancer Screening (PSA) — Healthy (97/100) — 1 param, 0 out of range
+
+**Expanded Parameter View (shown for Blood Glucose on load as default open):**
+- Parameter: "Fasting Blood Sugar (FBS)"
+- Original name from lab: "Glucose (Fasting)" — Medanta
+- Standardised name: "FASTING BLOOD GLUCOSE"
+- Value: 104.1 mg/dL
+- Reference range: 70–100 mg/dL
+- Visual range bar with marker at 104.1
+- Risk badge: Low Risk (amber)
+- Plain English: "Your fasting blood sugar is slightly above the normal range. Values between 100–125 mg/dL indicate pre-diabetes. This does not mean you have diabetes, but it's worth monitoring."
+- Possible Symptoms: Increased thirst, Fatigue, Blurred vision (shown as small tags)
+- Lifestyle Tips: Reduce refined carbs, 30 min daily walk, monitor quarterly
+- Disclaimer: "This is not a medical diagnosis. Consult your doctor."
+
+**Lab Standardisation Banner (subtle, at bottom of report):**
+- "HealthOS standardised 22 parameters from Medanta's format to our universal standard."
+- Small table showing 3 example mappings:
+  | Lab Name | HealthOS Standard |
+  |----------|------------------|
+  | Haemoglobin (HB) | HEMOGLOBIN |
+  | SGPT (ALT) | ALANINE TRANSAMINASE |
+  | Glucose (Fasting) | FASTING BLOOD GLUCOSE |
+
+---
+
+### SCREEN 4: TRENDS (`/trends`)
+
+**Layout:** Full width.
+
+**Header:** "Health Trends" | Subtext: "Track how your parameters change across reports and labs"
+
+**Parameter Selector:**
+- Dropdown: "Select a parameter to track"
+- Pre-populated with Ranjeet's parameters
+- Default selected: "Fasting Blood Sugar"
+
+**Chart Area (Recharts LineChart):**
+- X-axis: Report dates (Dec 2018, Aug 2021, May 2023, Apr 2025)
+- Y-axis: Value in mg/dL
+- Line: Blue with dots at each data point
+- Reference range band: Green shaded area between 70–100
+- Data points for FBS: 97 → 89 → 87 → 101
+- Tooltip on hover: Date | Lab | Value | Risk Level
+- Annotation on Apr 2025 point: Small amber flag "Above normal range"
+
+**Lab Source Indicator:**
+- Below chart: Each data point labelled with lab name
+- Caption: "All values standardised to mg/dL regardless of original lab format"
+
+**Secondary Stats Row (below chart):**
+- Lowest recorded: 87 mg/dL (May 2023)
+- Highest recorded: 101 mg/dL (Apr 2025)
+- Trend: ↑ Rising — monitor closely
+
+**Other Trackable Parameters (quick-select chips):**
+- Hemoglobin | Total Cholesterol | LDL | Vitamin D | TSH | Uric Acid | Creatinine
+- Clicking any chip updates the chart
+
+---
+
+### SCREEN 5: MENTAL HEALTH (`/mental-health`)
+
+**Layout:** Full width, scrollable.
+
+**Header:**
+- Title: "Mental Health Assessment"
+- Subtext: "Evidence-based, clinically validated screening tools. Private and confidential — your responses are never shared."
+- Disclaimer banner (amber): "These are screening tools, not diagnostic instruments. Please consult a mental health professional for diagnosis and treatment."
+
+**Assessment Cards (4 cards, 2x2 grid on desktop):**
+
+Each card shows:
+- Test name and full form
+- What it screens for
+- Number of questions
+- Time to complete
+- Last completed date (or "Not yet taken")
+- Status badge: Not Started / Completed / Retake
+- "Start Assessment" button
+
+Card 1 — PHQ-9 (Patient Health Questionnaire)
+- Screens for: Depression severity
+- 9 questions | ~3 minutes
+- Scoring: 0–4 None, 5–9 Mild, 10–14 Moderate, 15–19 Moderately Severe, 20–27 Severe
+
+Card 2 — GAD-7 (Generalised Anxiety Disorder Scale)
+- Screens for: Anxiety severity
+- 7 questions | ~2 minutes
+- Scoring: 0–4 Minimal, 5–9 Mild, 10–14 Moderate, 15–21 Severe
+
+Card 3 — PSS (Perceived Stress Scale)
+- Screens for: Perceived stress levels
+- 10 questions | ~3 minutes
+- Scoring: 0–13 Low, 14–26 Moderate, 27–40 High
+
+Card 4 — DASS-21 (Depression Anxiety Stress Scale)
+- Screens for: Depression, anxiety and stress simultaneously
+- 21 questions | ~5 minutes
+- Scoring: Separate subscale scores for each dimension
+
+**Assessment Flow (modal, triggered by "Start Assessment"):**
+- Progress bar at top: "Question 3 of 9"
+- Question text: Large, readable
+- Response options: Likert scale buttons (Not at all / Several days / More than half the days / Nearly every day)
+- Previous / Next navigation
+- On completion: show results immediately
+
+**Results View (after completing PHQ-9 as example):**
+- Score: "12 / 27"
+- Band: "Moderate Depression"
+- Colour: Amber
+- Plain English: "Your responses suggest you may be experiencing moderate levels of depressive symptoms. This doesn't mean you have depression — but it's worth paying attention to."
+- What this means: 3 bullet points in plain language
+- Recommendations:
+  - "Consider speaking with a counsellor or therapist"
+  - "iCall (free, India-based): 9152987821"
+  - "Vandrevala Foundation Helpline: 1860-2662-345 (24x7)"
+  - "Nimhans Connect: nimhansconnect.in"
+- Retake reminder: "We recommend retaking this assessment every 4 weeks to track changes"
+- "Download Results" button (PDF shell — no actual generation needed for prototype)
+
+**Mental Health Score Integration:**
+- Mental health scores appear SEPARATELY from the physical Health Score (0–100)
+- A second score panel: "Mental Wellness Score: 64/100"
+- Calculated as: weighted average of inverted PHQ-9, GAD-7, PSS, DASS-21 subscales, normalised to 0–100
+- Shown on Dashboard as a separate card alongside physical Health Score
+- Tooltip: "This score reflects your self-reported mental wellness across 4 validated screening tools. It is not a clinical diagnosis."
+- Nuance note in UI: "Physical and mental health scores are shown separately — combined scores can obscure important signals in either dimension."
+
+---
+
+### SCREEN 6: MEDICINE ALTERNATIVES (`/medicines`)
+
+**Layout:** Full width.
+
+**Header:**
+- Title: "Generic Medicine Finder"
+- Subtext: "Find affordable alternatives with the same active ingredient. All medicines listed are approved by CDSCO (India)."
+
+**Search Bar:**
+- Large input: "Enter a brand name or salt name (e.g. Crocin, Metformin, Atorvastatin 10mg)"
+- Search button
+- Note below: "We show only Indian-approved generics. Consult your doctor before switching medicines."
+
+**Mock Results (pre-loaded for "Atorvastatin 10mg" as default demo state):**
+
+**Result Header:**
+- Searched: "Atorvastatin 10mg"
+- Active Salt: Atorvastatin Calcium 10mg
+- Drug Class: HMG-CoA Reductase Inhibitor (Statin)
+- Used for: High cholesterol, cardiovascular risk reduction
+
+**Branded Reference:**
+| Brand | Manufacturer | Price (10 tabs) | MRP/tab |
+|-------|-------------|-----------------|---------|
+| Lipitor 10mg | Pfizer | ₹185 | ₹18.50 |
+| Atorva 10mg | Zydus | ₹95 | ₹9.50 |
+
+**Generic Alternatives (cards):**
+Card format: Salt name | Manufacturer | Pack size | Price | Savings vs branded | CDSCO approved badge
+
+Show 5 mock generics:
+1. Atorvastatin 10mg — Sun Pharma — 10 tabs — ₹32 — Save 83% vs Lipitor — ✓ CDSCO
+2. Atorvastatin 10mg — Cipla — 10 tabs — ₹28 — Save 85% vs Lipitor — ✓ CDSCO
+3. Atorvastatin 10mg — Dr. Reddy's — 10 tabs — ₹35 — Save 81% vs Lipitor — ✓ CDSCO
+4. Atorvastatin 10mg — Mankind — 10 tabs — ₹22 — Save 88% vs Lipitor — ✓ CDSCO
+5. Atorvastatin 10mg — Lupin — 10 tabs — ₹30 — Save 84% vs Lipitor — ✓ CDSCO
+
+**Salt Overlap Checker (below search results):**
+- Title: "Check for overlapping salts in your medicines"
+- Subtext: "If you take multiple medicines, some may contain the same active ingredient — which can lead to accidental double-dosing."
+- Input: Two fields — "Medicine 1" and "Medicine 2" + "Check Overlap" button
+- Mock result for "Combiflam" + "Ibuprofen": 
+  - ⚠️ Overlap detected: Both contain Ibuprofen 400mg
+  - "Taking both simultaneously could result in exceeding the safe daily dose of Ibuprofen. Consult your doctor."
+
+**Disclaimer (sticky at bottom of page):**
+"HealthOS is not a licensed pharmacy. This tool is for informational purposes only. Never switch, stop, or start any medication without consulting a qualified doctor or pharmacist."
+
+---
+
+### SCREEN 7: PROFILE (`/profile`)
+
+**Layout:** Two-column. Left: personal info. Right: report history.
+
+**Left — Personal Details:**
+- Name: Ranjeet Oak
+- DOB: 29 Nov 1972 (Age: 52)
+- Gender: Male
+- Email: ranjeet.oak@example.com
+- Edit button
+
+**Health Context (affects reference ranges):**
+- Known conditions: None declared
+- Current medications: None declared
+- "Add medications" → opens medicine input (links to /medicines)
+
+**Right — Report History:**
+- Table: Date | Lab | Health Score | Parameters | Actions (View / Delete)
+- 3 mock reports for Ranjeet
+
+**Subscription Status:**
+- Current plan: Free (1 report used)
+- "Upgrade to Pro — ₹299/month" banner
+- Pro features: Unlimited reports, trend tracking, mental health assessments, medicine finder, family profiles
+
+---
+
+## 5. MOCK DATA (Ranjeet Oak — Use This Throughout)
+
+```javascript
+const mockPatient = {
+  name: "Ranjeet Oak",
+  age: 52,
+  gender: "male",
+  dob: "1972-11-29",
+  healthScore: 73,
+  mentalWellnessScore: 64,
+  riskLevel: "moderate"
+}
+
+const mockReports = [
+  { id: "r1", date: "2025-04-02", lab: "Medanta", healthScore: 73 },
+  { id: "r2", date: "2023-05-13", lab: "Medanta", healthScore: 81 },
+  { id: "r3", date: "2021-08-18", lab: "Medanta", healthScore: 78 }
+]
+
+const mockAlerts = [
+  { param: "Fasting Blood Sugar", value: 104.1, unit: "mg/dL", range: "70-100", risk: "low_risk" },
+  { param: "Serum Globulin", value: 2.30, unit: "g/dL", range: "2.4-3.5", risk: "low_risk" }
+]
+
+const mockTrendData = {
+  "Fasting Blood Sugar": [
+    { date: "Dec 2018", lab: "Medanta", value: 97 },
+    { date: "Aug 2021", lab: "Medanta", value: 89 },
+    { date: "May 2023", lab: "Medanta", value: 87 },
+    { date: "Apr 2025", lab: "Medanta", value: 101 }
+  ],
+  "Total Cholesterol": [
+    { date: "Aug 2021", lab: "Medanta", value: 210 },
+    { date: "May 2023", lab: "Medanta", value: 209 },
+    { date: "Apr 2025", lab: "Medanta", value: 159 }
+  ],
+  "LDL Cholesterol": [
+    { date: "Aug 2021", lab: "Medanta", value: 141 },
+    { date: "May 2023", lab: "Medanta", value: 133 },
+    { date: "Apr 2025", lab: "Medanta", value: 82 }
+  ]
+}
+```
+
+---
+
+## 6. COMPONENT LIBRARY (Build These Once, Reuse)
+
+1. `HealthScoreGauge` — donut chart, colour by risk band, score in centre
+2. `RiskBadge` — pill badge: Healthy (green) / Low Risk (amber) / Moderate Risk (amber-dark) / High Risk (red) / Unable to Assess (grey)
+3. `ParameterBar` — horizontal bar showing value vs reference range with coloured zones
+4. `TestProfileCard` — expandable card for each test category
+5. `TrendChart` — Recharts LineChart with reference band overlay
+6. `AssessmentCard` — card for each mental health test
+7. `QuestionCard` — question + Likert scale buttons for assessment flow
+8. `MedicineCard` — generic alternative card with savings badge
+9. `AlertCard` — out-of-range parameter alert
+10. `UploadZone` — drag-and-drop zone (UI only, no actual upload needed)
+
+---
+
+## 7. NAVIGATION FLOW
+
+```
+Landing (/)
+  → Sign Up / Demo → Dashboard (/dashboard)
+    → Upload Report → Report Detail (/report/r1)
+    → View Trends → Trends (/trends)
+    → Mental Health card → Mental Health (/mental-health)
+      → Start PHQ-9 → Assessment Flow (modal)
+        → Results → Dashboard
+    → Medicine Finder card → Medicines (/medicines)
+    → Profile icon → Profile (/profile)
+```
+
+---
+
+## 8. WHAT NOT TO BUILD (Scope Guard)
+
+- No real file upload or OCR
+- No real Supabase calls (use hardcoded mock data)
+- No real Claude API calls
+- No authentication flow (mock logged-in state)
+- No payment/subscription flow
+- No actual PDF generation
+- No push notifications
+- No family member profiles
+- No drug-drug interaction database (just the UI shell with one mock example)
+- No multilingual support
+
+---
+
+## 9. ONE-PAGER BRIEF (HealthOS)
+
+**To be produced as a separate clean PDF document**
+
+**Title:** HealthOS — Your Health, Finally Decoded
+
+**Problem:**
+India generates 500M+ diagnostic reports annually. Most people receive a 12-page PDF with no context, can't compare results across labs (SRL vs Thyrocare vs Medanta use different names, units, and ranges for the same test), and have no way to track their health trajectory over time. Mental health goes entirely unscreened. And 80% of patients overpay for branded drugs when generics with identical salts are available for 80% less.
+
+**Why AI:**
+Indian lab reports have wildly inconsistent formatting — rules-based parsing breaks. LLMs handle layout variation, extract structured data from any format, and generate plain-English explanations personalised to the patient's age and gender. AI makes the 500M reports that nobody reads into health intelligence that actually changes behaviour.
+
+**Product Concept:**
+HealthOS is a B2C health intelligence platform with four modules:
+1. Smart Report — AI-parsed, standardised lab reports with plain-English explanations and a 0-100 Health Score
+2. Health Trends — unified tracking of parameters across labs and time
+3. Mental Wellness — PHQ-9, GAD-7, PSS, DASS-21 screening with scoring, interpretation, and referral nudges
+4. Medicine Finder — generic alternatives to branded drugs, matched at salt level, CDSCO-approved only
+
+**Customer:**
+Indian urban professional, 25–50, who gets an annual health check but doesn't act on it. The trigger: receiving a lab report they can't interpret. The job: "Tell me what's wrong, what to watch, and what to do about it."
+
+**Business Case:**
+- TAM: 200M+ urban Indians with health insurance or disposable income for health spend
+- Revenue: ₹299/month subscription (unlimited reports, all modules)
+- CAC: Low — organic via lab report sharing (report-as-referral loop)
+- Moat: Standardisation dataset (260+ params mapped across 6 lab chains, validated by doctors across 1,000+ reports) takes years to build
+- Comparable: Zus Health (US, $40M Series B) — HealthOS is the India-first version
+
+**Ask (for hackathon context):**
+Validation and feedback. What works? What would make you pay ₹299/month?
+
+---
+
+## 10. BUILD INSTRUCTIONS FOR REPLIT
+
+1. Create a new Replit project: React + Vite template
+2. Install dependencies: `npm install tailwindcss shadcn/ui recharts lucide-react react-router-dom`
+3. Set up Tailwind with the colour tokens defined in Section 2
+4. Create the 7 page components with React Router
+5. Build the 10 reusable components from Section 6
+6. Wire all pages with mock data from Section 5
+7. No backend calls. All data is imported from a `/src/mockData.js` file
+8. Deploy on Replit and share the URL
+
+**File structure:**
+```
+src/
+  pages/
+    Landing.jsx
+    Dashboard.jsx
+    ReportDetail.jsx
+    Trends.jsx
+    MentalHealth.jsx
+    Medicines.jsx
+    Profile.jsx
+  components/
+    HealthScoreGauge.jsx
+    RiskBadge.jsx
+    ParameterBar.jsx
+    TestProfileCard.jsx
+    TrendChart.jsx
+    AssessmentCard.jsx
+    QuestionCard.jsx
+    MedicineCard.jsx
+    AlertCard.jsx
+    UploadZone.jsx
+    Sidebar.jsx
+  mockData.js
+  App.jsx
+  main.jsx
+```
