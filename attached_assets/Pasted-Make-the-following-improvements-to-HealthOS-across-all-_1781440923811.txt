@@ -1,0 +1,313 @@
+Make the following improvements to HealthOS across all pages. 
+Implement all changes in one pass. Do not break existing functionality.
+
+---
+
+## 1. REPORT DETAIL PAGE (/report/r1)
+
+### 1a. Add header section above test profile cards
+Insert this at the very top of the report detail content, above "Test Profiles":
+- Patient: Ranjeet Oak | Male, 52yr | Booking ID: 660451
+- Lab: Medanta, Cybercity | Date: 2 Apr 2025
+- Large amber badge: "73 / 100 — Moderate Risk"
+- Horizontal risk bar with 4 colour segments (red, amber, yellow, green) 
+  with markers: 0 High Risk | 0 Medium Risk | 1 Low Risk | 21 Healthy
+- Caption below bar: "21 of 22 parameters within healthy range"
+
+### 1b. Fix Kidney Function Test card
+Currently shows "0 parameters". Fix to show "3 parameters" 
+(Blood Urea, Serum Creatinine, Uric Acid). When expanded, show 
+these 3 parameters with their values from Ranjeet Oak's Medanta 
+report (Blood Urea: 30 mg/dL, Creatinine: 0.9 mg/dL, Uric Acid: 
+7 mg/dL) but keep the "Unable to Assess" badge — threshold not met 
+means no profile score, but parameters should still be visible.
+
+### 1c. Add standardisation banner at bottom of report
+After all test profile cards, add a light blue info card:
+
+Title: "How HealthOS Standardised Your Report"
+Body: "HealthOS mapped 22 parameters from Medanta's format to our 
+universal standard, making your results comparable across any 
+Indian lab."
+
+Small 3-row table inside the card:
+| As printed on your report | HealthOS Standard         |
+|---------------------------|---------------------------|
+| Haemoglobin (HB)          | HEMOGLOBIN                |
+| SGPT (ALT)                | ALANINE TRANSAMINASE      |
+| Glucose (Fasting)         | FASTING BLOOD GLUCOSE     |
+
+Style: bg-blue-50, border-blue-200, rounded-xl, padding-4.
+
+---
+
+## 2. MENTAL HEALTH PAGE (/mental-health)
+
+### 2a. Disclaimer banner
+At the very top, add an amber banner:
+"These are screening tools, not diagnostic instruments. 
+Please consult a mental health professional for diagnosis 
+and treatment."
+
+### 2b. Mental Wellness Score panel
+Below the disclaimer, add a panel showing:
+- Title: "Your Mental Wellness Score"
+- Score: 64 / 100
+- Subtext: "Kept separate from your physical health score — 
+  combined scores can obscure important signals in either dimension."
+- A small info tooltip icon next to the subtext
+
+### 2c. Four assessment cards in 2x2 grid
+Each card shows: test name, full form, what it screens, 
+question count, time estimate, "Not yet taken" status badge, 
+"Start Assessment" button.
+
+Card 1 — PHQ-9
+Full name: Patient Health Questionnaire
+Screens for: Depression severity
+9 questions | ~3 minutes
+Scoring: None (0-4), Mild (5-9), Moderate (10-14), 
+Moderately Severe (15-19), Severe (20-27)
+
+Card 2 — GAD-7
+Full name: Generalised Anxiety Disorder Scale
+Screens for: Anxiety severity
+7 questions | ~2 minutes
+Scoring: Minimal (0-4), Mild (5-9), Moderate (10-14), Severe (15-21)
+
+Card 3 — PSS
+Full name: Perceived Stress Scale
+Screens for: Perceived stress levels
+10 questions | ~3 minutes
+Scoring: Low (0-13), Moderate (14-26), High (27-40)
+
+Card 4 — DASS-21
+Full name: Depression Anxiety Stress Scale
+Screens for: Depression, anxiety and stress simultaneously
+21 questions | ~5 minutes
+Three separate subscale scores for depression, anxiety, stress.
+
+### 2d. PHQ-9 working assessment modal
+When "Start Assessment" is clicked on the PHQ-9 card, open a 
+full-screen modal with a working question flow.
+
+Use these real PHQ-9 questions:
+Q1: Little interest or pleasure in doing things?
+Q2: Feeling down, depressed, or hopeless?
+Q3: Trouble falling or staying asleep, or sleeping too much?
+Q4: Feeling tired or having little energy?
+Q5: Poor appetite or overeating?
+Q6: Feeling bad about yourself or that you are a failure?
+Q7: Trouble concentrating on things?
+Q8: Moving or speaking slowly, or being fidgety/restless?
+Q9: Thoughts that you would be better off dead or hurting yourself?
+
+Each question shows:
+- Progress bar: "Question X of 9"
+- Question text (large, readable)
+- 4 response buttons (full width):
+  "Not at all" (0) | "Several days" (1) | 
+  "More than half the days" (2) | "Nearly every day" (3)
+- Previous / Next navigation buttons
+- Selected answer should be highlighted in sky blue
+
+On completion, show a results screen inside the modal:
+Score: 12 / 27
+Band: "Moderate Depression" in amber badge
+Plain English explanation: "Your responses suggest you may be 
+experiencing moderate depressive symptoms. This doesn't mean 
+you have depression — but it is worth paying attention to and 
+discussing with a professional."
+Resources section:
+- iCall (free, India): 9152987821
+- Vandrevala Foundation (24x7): 1860-2662-345
+- Nimhans Connect: nimhansconnect.in
+Retake note: "We recommend retaking this assessment every 4 weeks 
+to track changes over time."
+"Back to Dashboard" button closes the modal.
+
+Other 3 assessment cards (GAD-7, PSS, DASS-21): clicking 
+"Start Assessment" shows a placeholder modal saying 
+"Assessment coming soon — PHQ-9 is available now." with a 
+"Take PHQ-9 Instead" button.
+
+---
+
+## 3. MEDICINE FINDER PAGE (/medicines)
+
+### 3a. Pre-loaded demo state
+The page should load with "Atorvastatin 10mg" already searched 
+and results displayed. Do not require the user to type anything 
+for the demo.
+
+Result header section:
+- Searched term: "Atorvastatin 10mg"
+- Active Salt: Atorvastatin Calcium 10mg
+- Drug Class: HMG-CoA Reductase Inhibitor (Statin)
+- Used for: High cholesterol, cardiovascular risk reduction
+
+Branded reference (small 2-row table):
+| Brand       | Manufacturer | Price (10 tabs) |
+|-------------|-------------|-----------------|
+| Lipitor 10mg| Pfizer       | ₹185            |
+| Atorva 10mg | Zydus        | ₹95             |
+
+### 3b. Five generic alternative cards
+Show 5 cards below the branded reference. Each card:
+- Salt name: Atorvastatin 10mg
+- Manufacturer name
+- Price per 10 tabs
+- Savings % badge in green
+- "✓ CDSCO Approved" badge in blue
+
+Cards:
+1. Sun Pharma | ₹32 | Save 83% vs Lipitor
+2. Cipla | ₹28 | Save 85% vs Lipitor
+3. Dr. Reddy's | ₹35 | Save 81% vs Lipitor
+4. Mankind Pharma | ₹22 | Save 88% vs Lipitor
+5. Lupin | ₹30 | Save 84% vs Lipitor
+
+### 3c. Salt Overlap Checker section
+Below the generic cards, add a new section:
+Title: "Salt Overlap Checker"
+Subtext: "Taking multiple medicines? Check if any share the same 
+active ingredient — accidental double-dosing is more common than 
+you think."
+
+Two input fields side by side: "Medicine 1" | "Medicine 2"
+"Check Overlap" button below
+
+Pre-load a mock result visible by default:
+Checking: Combiflam + Ibuprofen
+Result: ⚠️ Overlap Detected
+"Both medicines contain Ibuprofen 400mg. Taking them simultaneously 
+could exceed the safe daily dose. Please consult your doctor 
+before taking both."
+Style the warning in amber with a warning icon.
+
+### 3d. Sticky disclaimer
+At the bottom of the page, add a grey disclaimer bar:
+"HealthOS is not a licensed pharmacy. This tool is for 
+informational purposes only. Never switch, stop, or start any 
+medication without consulting a qualified doctor or pharmacist."
+
+---
+
+## 4. TRENDS PAGE (/trends)
+
+### 4a. Reference range band on chart
+Add a green shaded band between 70 and 100 on the y-axis for 
+Fasting Blood Sugar, representing the normal reference range. 
+Label it "Normal Range" on the right side of the chart.
+
+### 4b. Amber flag annotation
+On the Apr 2025 data point (value: 101), add a small amber 
+flag or dot annotation with tooltip: "Above normal range"
+
+### 4c. Lab name labels
+Below each x-axis tick, show the lab name in small grey text:
+Dec 2018 — Medanta
+Aug 2021 — Medanta
+May 2023 — Medanta
+Apr 2025 — Medanta
+
+### 4d. Stats row below chart
+Add a 3-item stats row below the chart:
+- Lowest recorded: 87 mg/dL (May 2023)
+- Highest recorded: 101 mg/dL (Apr 2025)
+- Trend: ↑ Rising — monitor closely (amber text)
+
+### 4e. Parameter quick-select chips
+Below the stats row, add clickable chips:
+Hemoglobin | Total Cholesterol | LDL Cholesterol | 
+Vitamin D | TSH | Uric Acid
+
+Clicking each chip updates the chart with this mock data:
+
+Total Cholesterol (mg/dL, normal < 200):
+Aug 2021: 210 | May 2023: 209 | Apr 2025: 159
+Reference band: 0–200
+
+LDL Cholesterol (mg/dL, normal < 100):
+Aug 2021: 141 | May 2023: 133 | Apr 2025: 82
+Reference band: 0–100
+
+Hemoglobin (g/dL, normal 13–17 for male):
+Aug 2021: 14.3 | May 2023: 15.1 | Apr 2025: 14.8
+Reference band: 13–17
+
+Vitamin D (ng/mL, normal 30–100):
+Single point: Apr 2025: 51.2
+Reference band: 30–100
+
+TSH (µIU/mL, normal 0.4–4.05):
+Single point: Apr 2025: 2.31
+Reference band: 0.4–4.05
+
+Uric Acid (mg/dL, normal 3.5–8.5):
+Aug 2021: 9 | May 2023: 7 | Apr 2025: 6.9
+Reference band: 3.5–8.5
+
+---
+
+## 5. LANDING PAGE (/)
+
+### 5a. Problem statement section
+Add a 3-card section below the hero with title "The Problem With Health Reports Today":
+
+Card 1 — Icon: layers or shuffle
+Heading: "Same test, different numbers"
+Body: "SRL calls it 'Hb'. Thyrocare calls it 'Hemoglobin (HB)'. 
+Medanta calls it 'HAEMOGLOBIN'. You can't compare them. We can."
+
+Card 2 — Icon: file-x or file-question
+Heading: "Reports that nobody reads"
+Body: "A 12-page lab PDF with no context. HealthOS converts it 
+into a 60-second health briefing with plain-English explanations."
+
+Card 3 — Icon: indian rupee or tag
+Heading: "Generic drugs you never knew about"
+Body: "That branded medicine costs ₹800. The generic with the 
+same active ingredient costs ₹45. We find it for you."
+
+Style: 3 cards in a row, white background, subtle border, 
+rounded-xl, icon in sky blue at top of each card.
+
+### 5b. Feature stats strip
+Below the problem cards, add a 4-item stats strip on a 
+sky blue background:
+- 260+ standardised parameters
+- 6 major Indian lab chains supported  
+- 4 validated mental health tools
+- Save up to 88% on medicines
+
+---
+
+## 6. GLOBAL FIXES
+
+### 6a. Sidebar mental health label
+Ensure the Mental Health sidebar item uses a Brain icon 
+(lucide-react) and navigates correctly to /mental-health.
+
+### 6b. Dashboard mental health card update
+On the dashboard, update the Mental Health snapshot card to show:
+- "No assessments taken yet"
+- Mental Wellness Score: Not yet calculated
+- "Take your first assessment" as the CTA text
+(Remove "Last completed: 6 months ago" — that was placeholder text)
+
+### 6c. All pages: consistent page titles
+Each page should have a consistent H1 at the top:
+- Dashboard: "Good morning, Ranjeet"
+- Report Detail: "Smart Report — Medanta, 2 Apr 2025"
+- Trends: "Health Trends"
+- Mental Health: "Mental Health Assessments"
+- Medicines: "Generic Medicine Finder"
+- Profile: "My Profile"
+
+---
+
+Implement all of the above in a single pass. Use the existing 
+component library and colour tokens already in the codebase. 
+Do not remove or break any existing functionality. 
+All data is mock — no backend calls needed.
