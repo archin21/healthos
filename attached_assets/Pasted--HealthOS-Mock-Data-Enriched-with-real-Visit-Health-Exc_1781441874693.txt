@@ -39,44 +39,39 @@ export const mockAlerts = [
 ];
 
 // Real reference ranges from Smart_report_params-AHC.xlsx
-export const referenceRanges: Record<string, { normal: [number, number]; unit: string }> = {
-  "HEMOGLOBIN": { normal: [13.0, 18.0], unit: "g/dL" },
-  "HEMATOCRIT": { normal: [41.0, 50.0], unit: "%" },
-  "MEAN CORPUSCULAR HEMOGLOBIN(MCH)": { normal: [27.0, 32.0], unit: "pg" },
-  "MEAN CORP.HEMO.CONC(MCHC)": { normal: [31.5, 34.5], unit: "g/dL" },
-  "PLATELET COUNT": { normal: [150, 410], unit: "10³/µL" },
-  "TOTAL LEUCOCYTES COUNT": { normal: [4.0, 10.0], unit: "10³/µL" },
-  "ALANINE TRANSAMINASE (ALT/SGPT)": { normal: [0, 50], unit: "U/L" },
-  "ALBUMIN": { normal: [3.5, 5.0], unit: "g/dL" },
-  "Alkaline Phosphatase (ALP)": { normal: [30, 120], unit: "U/L" },
-  "ASPARTATE AMINOTRANSFERASE (AGT/SGOT)": { normal: [17, 59], unit: "U/L" },
-  "SERUM GLOBULIN": { normal: [2.4, 3.5], unit: "g/dL" },
-  "BLOOD UREA": { normal: [19, 43], unit: "mg/dL" },
-  "CREATININE - SERUM": { normal: [0.8, 1.5], unit: "mg/dL" },
-  "Uric Acid": { normal: [3.5, 8.5], unit: "mg/dL" },
-  "Fasting blood sugar (FBS)": { normal: [70, 100], unit: "mg/dL" },
-  "HDL CHOLESTEROL": { normal: [40, 60], unit: "mg/dL" },
-  "LDL CHOLESTEROL": { normal: [0, 100], unit: "mg/dL" },
-  "Total Cholesterol": { normal: [0, 200], unit: "mg/dL" },
-  "TSH": { normal: [0.4, 4.05], unit: "µIU/mL" },
-  "Sodium": { normal: [137, 145], unit: "mmol/L" },
-  "Potassium": { normal: [3.5, 5.1], unit: "mmol/L" },
-  "Chloride": { normal: [98, 107], unit: "mmol/L" },
-  "VITAMIN B12": { normal: [239, 931], unit: "pg/mL" },
-  "Vitamin D 25 - Hydroxy": { normal: [30, 100], unit: "ng/mL" },
-  "PSA Total": { normal: [0, 4.0], unit: "ng/mL" }
+// Age group: Late middle-aged adults (50-64 years) | Gender: Male
+export const referenceRanges = {
+  "HEMOGLOBIN": { normal: [13.0, 18.0], unit: "g/dL", low_risk: [12.0, null], medium_risk: [10.0, null], high_risk: [0, null] },
+  "HEMATOCRIT": { normal: [41.0, 50.0], unit: "%", low_risk: [38.0, null], medium_risk: [35.0, null], high_risk: [0, null] },
+  "MEAN CORPUSCULAR HEMOGLOBIN(MCH)": { normal: [27.0, 32.0], unit: "pg", low_risk: [25.0, null], medium_risk: [22.0, null] },
+  "MEAN CORP.HEMO.CONC(MCHC)": { normal: [31.5, 34.5], unit: "g/dL", low_risk: [30.0, null], medium_risk: [28.0, null] },
+  "PLATELET COUNT": { normal: [150, 410], unit: "10³/µL", low_risk: [100, null], medium_risk: [50, null] },
+  "TOTAL LEUCOCYTES COUNT": { normal: [4.0, 10.0], unit: "10³/µL", low_risk: [3.0, null], medium_risk: [2.0, null] },
+  "ALANINE TRANSAMINASE (ALT/SGPT)": { normal: [0, 50], unit: "U/L", low_risk: [null, 75], medium_risk: [null, 100], high_risk: [null, 999] },
+  "ALBUMIN": { normal: [3.5, 5.0], unit: "g/dL", low_risk: [3.0, null], medium_risk: [2.5, null] },
+  "Alkaline Phosphatase (ALP)": { normal: [30, 120], unit: "U/L", low_risk: [null, 180], medium_risk: [null, 240] },
+  "ASPARTATE AMINOTRANSFERASE (AGT/SGOT)": { normal: [17, 59], unit: "U/L", low_risk: [null, 90], medium_risk: [null, 120] },
+  "SERUM GLOBULIN": { normal: [2.4, 3.5], unit: "g/dL", low_risk: [2.0, null], medium_risk: [1.5, null] },
+  "BLOOD UREA": { normal: [19, 43], unit: "mg/dL", low_risk: [null, 60], medium_risk: [null, 80] },
+  "CREATININE - SERUM": { normal: [0.8, 1.5], unit: "mg/dL", low_risk: [null, 2.0], medium_risk: [null, 3.0] },
+  "Uric Acid": { normal: [3.5, 8.5], unit: "mg/dL", low_risk: [null, 10.0], medium_risk: [null, 12.0] },
+  "Fasting blood sugar (FBS)": { normal: [70, 100], unit: "mg/dL", low_risk: [null, 125], medium_risk: [null, 200], high_risk: [null, 999] },
+  "HDL CHOLESTEROL": { normal: [40, 60], unit: "mg/dL", low_risk: [35, null], medium_risk: [25, null] },
+  "LDL CHOLESTEROL": { normal: [0, 100], unit: "mg/dL", low_risk: [null, 130], medium_risk: [null, 160], high_risk: [null, 999] },
+  "Total Cholesterol": { normal: [0, 200], unit: "mg/dL", low_risk: [null, 239], medium_risk: [null, 999] },
+  "TSH": { normal: [0.4, 4.05], unit: "µIU/mL", low_risk: [0.1, null], medium_risk: [null, 10.0] },
+  "Sodium": { normal: [137, 145], unit: "mmol/L", low_risk: [130, null], medium_risk: [125, null] },
+  "Potassium": { normal: [3.5, 5.1], unit: "mmol/L", low_risk: [3.0, null], medium_risk: [2.5, null] },
+  "Chloride": { normal: [98, 107], unit: "mmol/L", low_risk: [90, null], medium_risk: [85, null] },
+  "VITAMIN B12": { normal: [239, 931], unit: "pg/mL", low_risk: [180, null], medium_risk: [150, null] },
+  "Vitamin D 25 - Hydroxy": { normal: [30, 100], unit: "ng/mL", low_risk: [20, null], medium_risk: [10, null] },
+  "PSA Total": { normal: [0, 4.0], unit: "ng/mL", low_risk: [null, 10.0], medium_risk: [null, 20.0] }
 };
 
-// Real parameter descriptions from New_Description-Smart_Report_.xlsx
-export const paramDescriptions: Record<string, {
-  explanation: string;
-  symptoms_low: string[];
-  measures_low: string[];
-  symptoms_high: string[];
-  measures_high: string[];
-}> = {
+// Real parameter descriptions from New_Description-Smart_Report_.xlsx (241 params)
+export const paramDescriptions = {
   "HEMOGLOBIN": {
-    explanation: "This test checks the blood's oxygen-carrying ability, helping to assess health and detect issues like anemia or polycythemia.",
+    explanation: "This test checks the blood\'s oxygen-carrying ability, helping to assess health and detect issues like anemia or polycythemia.",
     symptoms_low: ["Weakness, Fatigue & Generalized Malaise", "Pale and yellow skin / Pallor", "Dizziness or Vertigo", "Cold hands and feet", "Persistent headaches or migraines", "Palpitation/ Rapid Heartbeat (Tachycardia)"],
     measures_low: ["Adhere strictly to the treatment plan prescribed by the doctor.", "Keep track of any unusual bleeding and report it to the doctor.", "Combine a balanced diet with hydration, regular exercise, stress management, and adequate sleep."],
     symptoms_high: ["Persistent headaches or migraines", "Dizziness or Vertigo", "Itchiness, Especially After Bathing", "Reddish or Bluish Skin Discoloration", "Shortness of Breath"],
@@ -176,6 +171,7 @@ export const paramDescriptions: Record<string, {
 };
 
 // Real lab name mappings (standardisation engine)
+// Source: Smart_Report_Param-Category_specific_hormones.xlsx Names Dictionary + AHC params
 export const labNameMappings = [
   { lab_variant: "Haemoglobin (HB)", std_param: "HEMOGLOBIN", lab: "Medanta" },
   { lab_variant: "HB", std_param: "HEMOGLOBIN", lab: "Thyrocare" },
@@ -189,9 +185,9 @@ export const labNameMappings = [
   { lab_variant: "Fasting Blood Glucose", std_param: "Fasting blood sugar (FBS)", lab: "Redcliffe" },
   { lab_variant: "Globulin", std_param: "SERUM GLOBULIN", lab: "Medanta" },
   { lab_variant: "Globulin, Total", std_param: "SERUM GLOBULIN", lab: "Healthians" },
-  { lab_variant: "TSH", std_param: "TSH", lab: "Thyrocare" },
-  { lab_variant: "Thyroid Stimulating Hormone", std_param: "TSH", lab: "Redcliffe" },
-  { lab_variant: "T.S.H.", std_param: "TSH", lab: "SRL" },
+  { lab_variant: "TSH", std_param: "Thyroid stimulating hormone, TSH", lab: "Thyrocare" },
+  { lab_variant: "Thyroid Stimulating Hormone", std_param: "Thyroid stimulating hormone, TSH", lab: "Redcliffe" },
+  { lab_variant: "T.S.H.", std_param: "Thyroid stimulating hormone, TSH", lab: "SRL" },
   { lab_variant: "Platelet Count", std_param: "PLATELET COUNT", lab: "Medanta" },
   { lab_variant: "PLT", std_param: "PLATELET COUNT", lab: "Thyrocare" },
   { lab_variant: "Thrombocytes", std_param: "PLATELET COUNT", lab: "SRL" },
@@ -211,10 +207,13 @@ export const disclaimers = [
   { category: "GENERAL", text: "For the most accurate and reliable information, always refer to your original lab report." },
   { category: "HEALTH SCORE", text: "The health score provided is an analytical calculation derived from your lab report values. For a complete interpretation, seek guidance from a qualified doctor." },
   { category: "TEST SCORE", text: "The score is an analytical interpretation of your lab results. Consult a doctor for clearer insights." },
-  { category: "LIFESTYLE", text: "The lifestyle and diet tips provided are general recommendations and do not account for individual needs or medical conditions. For a personalized health and diet plan, please consult a qualified nutritionist." }
+  { category: "INFECTIOUS DISEASE", text: "The result suggests possible infection but is not conclusive. Clinical correlation with incubation periods and transient factors is necessary for confirmation." },
+  { category: "LIFESTYLE", text: "The lifestyle and diet tips provided are general recommendations and do not account for individual needs or medical conditions. For a personalized health and diet plan, please consult a qualified nutritionist." },
+  { category: "PREGNANCY", text: "Pregnancy can impact the results of multiple lab tests, leading to variations in reference ranges and interpretations. It is important to discuss your test results with your doctor." }
 ];
 
 // Complete test profiles for Ranjeet Oak (Medanta, Apr 2025)
+// All actual values from his report + real reference ranges + real descriptions
 export const mockTestProfiles = [
   {
     id: "cbc",
@@ -246,8 +245,7 @@ export const mockTestProfiles = [
       { name: "ALBUMIN", originalName: "Albumin", value: 4.5, unit: "g/dL", normalLow: 3.5, normalHigh: 5.0, risk: "normal", priority: "important" },
       { name: "Alkaline Phosphatase (ALP)", originalName: "Alkaline Phosphate", value: 49, unit: "U/L", normalLow: 30, normalHigh: 120, risk: "normal", priority: "moderate" },
       { name: "ASPARTATE AMINOTRANSFERASE (AGT/SGOT)", originalName: "SGOT (AST)", value: 23, unit: "U/L", normalLow: 17, normalHigh: 59, risk: "normal", priority: "important" },
-      {
-        name: "SERUM GLOBULIN", originalName: "Globulin, gm/dL", value: 2.30, unit: "g/dL", normalLow: 2.4, normalHigh: 3.5, risk: "low_risk", priority: "moderate",
+      { name: "SERUM GLOBULIN", originalName: "Globulin, gm/dL", value: 2.30, unit: "g/dL", normalLow: 2.4, normalHigh: 3.5, risk: "low_risk", priority: "moderate",
         description: "Globulins are proteins important for immunity and liver function. Your level is slightly below the normal range. This is a low-risk finding but worth monitoring.",
         symptoms: ["Weakness and Fatigue", "Increased Susceptibility to Infections", "Impaired Wound Healing"],
         measures: ["Consult a healthcare professional to address any underlying condition.", "Ensure adequate protein intake through a balanced diet.", "Monitor liver function regularly."]
@@ -294,8 +292,7 @@ export const mockTestProfiles = [
     paramCount: 1,
     outOfRange: 1,
     parameters: [
-      {
-        name: "Fasting blood sugar (FBS)", originalName: "Glucose (Fasting), mg/dL", value: 104.1, unit: "mg/dL", normalLow: 70, normalHigh: 100, risk: "low_risk", priority: "moderate",
+      { name: "Fasting blood sugar (FBS)", originalName: "Glucose (Fasting), mg/dL", value: 104.1, unit: "mg/dL", normalLow: 70, normalHigh: 100, risk: "low_risk", priority: "moderate",
         description: "Your fasting blood sugar is slightly above the normal range. Values between 100–125 mg/dL indicate pre-diabetes — a condition where blood sugar is elevated but not yet at diabetic levels. This is highly reversible with diet and lifestyle changes.",
         symptoms: ["Increased Thirst", "Frequent Urination", "Fatigue", "Blurred Vision", "Slow Healing of Wounds"],
         measures: ["Reduce simple carbohydrates like sugar and refined flour.", "Aim for 30 minutes of brisk walking daily.", "Include more fiber in your diet.", "Monitor blood sugar quarterly.", "Practice stress reduction — cortisol raises blood sugar."]
@@ -339,8 +336,7 @@ export const mockTestProfiles = [
     paramCount: 1,
     outOfRange: 0,
     parameters: [
-      {
-        name: "Vitamin D 25 - Hydroxy", originalName: "Vitamin-D (25 OH)", value: 51.2, unit: "ng/mL", normalLow: 30, normalHigh: 100, risk: "normal", priority: "important",
+      { name: "Vitamin D 25 - Hydroxy", originalName: "Vitamin-D (25 OH)", value: 51.2, unit: "ng/mL", normalLow: 30, normalHigh: 100, risk: "normal", priority: "important",
         description: "Vitamin D is essential for bone health, immunity, and mood regulation. Your level is within the optimal range (30-100 ng/mL). However, moderate risk scoring reflects that many Indians trend toward insufficiency — maintain current levels with sunlight exposure and dietary sources.",
         symptoms: [],
         measures: ["Get 15-20 minutes of direct sunlight exposure daily.", "Include Vitamin D-rich foods — fatty fish, egg yolks, fortified milk.", "Recheck levels annually."]
@@ -361,14 +357,13 @@ export const mockTestProfiles = [
   },
   {
     id: "cancer",
-    name: "Cancer Screening (PSA)",
+    name: "Cancer Screening",
     profileScore: 97,
     riskLevel: "healthy",
     paramCount: 1,
     outOfRange: 0,
     parameters: [
-      {
-        name: "PSA Total", originalName: "Prostate Specific Antigen- Total (PSA Total)", value: 0.47, unit: "ng/mL", normalLow: 0, normalHigh: 4.0, risk: "normal", priority: "important",
+      { name: "PSA Total", originalName: "Prostate Specific Antigen- Total (PSA Total)", value: 0.47, unit: "ng/mL", normalLow: 0, normalHigh: 4.0, risk: "normal", priority: "important",
         description: "PSA (Prostate-Specific Antigen) is a protein produced by the prostate. Your level of 0.47 ng/mL is well within the normal range for your age, indicating no current concern for prostate issues.",
         symptoms: [],
         measures: ["Continue annual PSA monitoring as part of routine health checks after age 50.", "Report any urinary symptoms like difficulty or frequency to your doctor."]
@@ -377,13 +372,8 @@ export const mockTestProfiles = [
   }
 ];
 
-// Trend data with real Medanta values — nested format with unit + reference range
-export const mockTrendData: Record<string, {
-  unit: string;
-  normalLow: number;
-  normalHigh: number;
-  data: { date: string; lab: string; value: number; flag?: string }[];
-}> = {
+// Trend data with real Medanta values across 4 time points
+export const mockTrendData = {
   "Fasting Blood Sugar": {
     unit: "mg/dL",
     normalLow: 70,

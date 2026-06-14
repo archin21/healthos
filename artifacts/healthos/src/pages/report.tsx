@@ -1,14 +1,13 @@
 import React from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { mockTestProfiles } from "@/mockData";
+import { mockPatient, mockTestProfiles, standardisationExamples, disclaimers } from "@/mockData";
 import { TestProfileCard } from "@/components/shared/TestProfileCard";
-import { useParams, Link } from "wouter";
+import { Link } from "wouter";
 import { ArrowLeft, Download, Share2, Info } from "lucide-react";
-import { RiskBadge } from "@/components/shared/RiskBadge";
+
+const generalDisclaimers = disclaimers.filter(d => d.category === "GENERAL");
 
 export default function ReportPage() {
-  const { id } = useParams();
-
   return (
     <AppLayout>
       <div className="p-6 max-w-6xl mx-auto">
@@ -18,15 +17,15 @@ export default function ReportPage() {
           </Link>
         </div>
 
-        {/* Header Section */}
+        {/* Report Header */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mb-6">
           <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6 pb-6 border-b border-slate-100">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-1">Smart Report — Medanta, 2 Apr 2025</h1>
-              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500 mt-2">
-                <span><span className="font-medium text-slate-700">Patient:</span> Ranjeet Oak</span>
-                <span><span className="font-medium text-slate-700">Gender:</span> Male, 52yr</span>
-                <span><span className="font-medium text-slate-700">Booking ID:</span> 660451</span>
+              <h1 className="text-2xl font-bold text-slate-900 mb-2">Smart Report — Medanta, 2 Apr 2025</h1>
+              <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-slate-500">
+                <span><span className="font-medium text-slate-700">Patient:</span> {mockPatient.name}</span>
+                <span><span className="font-medium text-slate-700">Gender:</span> Male, {mockPatient.age}yr</span>
+                <span><span className="font-medium text-slate-700">Booking ID:</span> {mockPatient.bookingId}</span>
                 <span><span className="font-medium text-slate-700">Lab:</span> Medanta, Cybercity</span>
                 <span><span className="font-medium text-slate-700">Date:</span> 2 Apr 2025</span>
               </div>
@@ -45,7 +44,7 @@ export default function ReportPage() {
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-6">
             <div className="flex items-center gap-4">
               <div className="text-center">
-                <div className="text-5xl font-extrabold text-slate-900">73</div>
+                <div className="text-5xl font-extrabold text-slate-900">{mockPatient.healthScore}</div>
                 <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Health Score</div>
               </div>
               <div className="text-3xl text-slate-200 font-light">/</div>
@@ -54,26 +53,24 @@ export default function ReportPage() {
                 <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-1">Maximum</div>
               </div>
             </div>
-            <div>
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-100 text-amber-800 font-semibold text-lg border border-amber-200">
-                73 / 100 — Moderate Risk
-              </span>
-            </div>
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-100 text-amber-800 font-semibold text-lg border border-amber-200">
+              {mockPatient.healthScore} / 100 — Moderate Risk
+            </span>
           </div>
 
-          {/* Horizontal Risk Bar */}
+          {/* Risk Bar */}
           <div className="space-y-3">
-            <div className="flex justify-between text-xs font-medium text-slate-500 mb-1">
+            <div className="flex justify-between text-xs font-medium text-slate-400 mb-1">
               <span>High Risk</span>
               <span>Medium Risk</span>
               <span>Low Risk</span>
               <span>Healthy</span>
             </div>
             <div className="h-3 w-full rounded-full overflow-hidden flex gap-0.5">
-              <div className="bg-red-500 h-full rounded-l-full" style={{ width: '0%' }} title="0 High Risk" />
-              <div className="bg-orange-400 h-full" style={{ width: '0%' }} title="0 Medium Risk" />
-              <div className="bg-amber-400 h-full" style={{ width: '4.5%' }} title="1 Low Risk" />
-              <div className="bg-green-500 h-full rounded-r-full flex-1" title="21 Healthy" />
+              <div className="bg-red-500 h-full rounded-l-full" style={{ width: "0%" }} />
+              <div className="bg-orange-400 h-full" style={{ width: "0%" }} />
+              <div className="bg-amber-400 h-full" style={{ width: "4.5%" }} />
+              <div className="bg-green-500 h-full rounded-r-full flex-1" />
             </div>
             <div className="flex gap-5 text-xs text-slate-500">
               <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-red-500" /> 0 High Risk</span>
@@ -89,12 +86,12 @@ export default function ReportPage() {
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Test Profiles</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           {mockTestProfiles.map(profile => (
-            <TestProfileCard key={profile.id} profile={profile} />
+            <TestProfileCard key={profile.id} profile={profile as any} />
           ))}
         </div>
 
         {/* Standardisation Banner */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6">
           <div className="flex items-start gap-3 mb-4">
             <Info className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
             <div>
@@ -110,25 +107,36 @@ export default function ReportPage() {
                 <tr className="border-b border-blue-200">
                   <th className="pb-2 font-semibold text-blue-800">As printed on your report</th>
                   <th className="pb-2 font-semibold text-blue-800">HealthOS Standard</th>
+                  <th className="pb-2 font-semibold text-blue-800 hidden sm:table-cell">Source</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-blue-100">
-                <tr>
-                  <td className="py-2 text-blue-700">Haemoglobin (HB)</td>
-                  <td className="py-2 font-mono font-medium text-blue-900">HEMOGLOBIN</td>
-                </tr>
-                <tr>
-                  <td className="py-2 text-blue-700">SGPT (ALT)</td>
-                  <td className="py-2 font-mono font-medium text-blue-900">ALANINE TRANSAMINASE</td>
-                </tr>
-                <tr>
-                  <td className="py-2 text-blue-700">Glucose (Fasting)</td>
-                  <td className="py-2 font-mono font-medium text-blue-900">FASTING BLOOD GLUCOSE</td>
-                </tr>
+                {standardisationExamples.map((ex, i) => (
+                  <tr key={i}>
+                    <td className="py-2 text-blue-700">{ex.labName}</td>
+                    <td className="py-2 font-mono font-medium text-blue-900 text-xs">{ex.healthOSName}</td>
+                    <td className="py-2 text-blue-400 text-xs hidden sm:table-cell">{ex.sourceNote}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
+
+        {/* Disclaimers */}
+        {generalDisclaimers.length > 0 && (
+          <div className="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Important Notes</h3>
+            <ul className="space-y-2">
+              {generalDisclaimers.map((d, i) => (
+                <li key={i} className="flex items-start gap-2 text-xs text-slate-500">
+                  <div className="w-1 h-1 rounded-full bg-slate-400 mt-1.5 shrink-0" />
+                  {d.text}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </AppLayout>
   );

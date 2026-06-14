@@ -1,0 +1,186 @@
+Replace src/mockData.js entirely with the following content, then 
+wire it throughout the app. Do not change any UI structure or 
+styling — only replace data sources.
+
+========== PASTE FULL mockData.js CONTENT HERE ==========
+
+[Copy the entire contents of the mockData.js file provided]
+
+==========================================================
+
+After replacing mockData.js, make the following wiring changes 
+across the app:
+
+---
+
+## 1. IMPORT CLEANUP
+
+In every file that currently has inline mock data or hardcoded 
+health values, remove the inline data and import from mockData.js:
+
+import {
+  mockPatient,
+  mockReports,
+  mockAlerts,
+  mockTestProfiles,
+  mockTrendData,
+  paramDescriptions,
+  referenceRanges,
+  labNameMappings,
+  standardisationExamples,
+  disclaimers
+} from '../mockData.js';
+
+---
+
+## 2. DASHBOARD PAGE
+
+Replace all hardcoded values with imports:
+
+- Patient greeting: use mockPatient.name
+- Health score gauge: use mockPatient.healthScore (73)
+- Risk level label: use mockPatient.riskLevel ("moderate")
+- Score narrative: "Your score has decreased slightly since your 
+  last test in 2023. Key contributors are slightly elevated fasting 
+  blood sugar and suboptimal vitamin D levels."
+- Recent reports list: map over mockReports array. Each row shows:
+    date | lab | Score: healthScore | chevron
+- Quick Alerts panel: map over mockAlerts array. Each alert shows:
+    param name | value + unit | risk badge
+- Mental health card: "No assessments taken yet" with 
+  "Take your first assessment" CTA
+
+---
+
+## 3. REPORT DETAIL PAGE (/report/r1)
+
+### 3a. Header section
+Show at the very top above test profiles:
+- Patient: {mockPatient.name} | Male, {mockPatient.age}yr | 
+  Booking ID: {mockPatient.bookingId}
+- Lab: Medanta — Cybercity | Date: 2 Apr 2025
+- Health Score badge: {mockPatient.healthScore} / 100 — 
+  Moderate Risk (amber)
+- Risk bar: 0 High Risk | 0 Medium Risk | 1 Low Risk | 21 Healthy
+- Caption: "21 of 22 parameters within healthy range"
+
+### 3b. Test profile cards
+Replace all hardcoded test cards with mockTestProfiles array.
+For each profile in mockTestProfiles, render a TestProfileCard:
+- name: profile.name
+- profileScore: profile.profileScore (null = "Unable to Assess")
+- riskLevel: profile.riskLevel
+- paramCount: profile.paramCount
+- outOfRange: profile.outOfRange
+- thresholdNote: profile.thresholdNote (show if present)
+
+When a card is expanded, map over profile.parameters and render 
+each parameter with:
+- originalName (lab format) shown in small grey text below 
+  the standardised name
+- value + unit
+- ParameterBar: normalLow to normalHigh as the green zone
+- risk badge
+- If the parameter has a description field: show it in a blue 
+  info box
+- If the parameter has symptoms array: show as tags under 
+  "Possible Symptoms"
+- If the parameter has measures array: show as bullet list under 
+  "Lifestyle Tips"
+
+For parameters WITHOUT inline description/symptoms/measures, 
+look them up in paramDescriptions using the parameter name as key. 
+If found, show the explanation, and symptoms_high or symptoms_low 
+depending on whether value > normalHigh or value < normalLow.
+
+### 3c. Standardisation banner
+After all test profile cards, render the standardisation section:
+- Title: "How HealthOS Standardised Your Report"
+- Body: "HealthOS mapped 22 parameters from Medanta's format to 
+  our universal standard, making your results comparable across 
+  any Indian lab."
+- Table: map over standardisationExamples array, show 
+  labName → healthOSName for each row
+
+### 3d. Disclaimers footer
+Below the standardisation banner, render disclaimers filtered 
+to category === "GENERAL" from the disclaimers array.
+Show each as a small grey bullet point.
+
+---
+
+## 4. TRENDS PAGE
+
+Replace all hardcoded chart data with mockTrendData:
+
+- Default selected parameter: "Fasting Blood Sugar"
+- For each parameter in mockTrendData:
+  - x-axis: data[].date
+  - y-axis: data[].value
+  - Reference band: normalLow to normalHigh (green shaded)
+  - Per data point: if flag exists, show amber annotation dot
+  - Tooltip: date | lab | value | unit | flag (if any)
+  - Below x-axis ticks: show data[].lab in small grey text
+
+Stats row below chart (compute from selected parameter data):
+- Lowest: Math.min(...values) + date
+- Highest: Math.max(...values) + date  
+- Trend: compare last two values — if rising show ↑ amber, 
+  if falling show ↓ green, if stable show → grey
+
+Parameter chips: one chip per key in mockTrendData object.
+Clicking a chip sets the selected parameter and re-renders 
+the chart with that dataset.
+
+---
+
+## 5. REPORT DETAIL — PARAMETER BAR COMPONENT
+
+Update ParameterBar to use the actual normalLow/normalHigh 
+from each parameter object rather than hardcoded range values.
+The bar should:
+- Show full range as: normalLow * 0.7 to normalHigh * 1.2
+- Green zone: normalLow to normalHigh
+- Amber zone: normalHigh to normalHigh * 1.2
+- Red zone: normalHigh * 1.2 and above (and below normalLow * 0.7)
+- Value marker: positioned proportionally across the bar
+- Show Min: {normalLow} and Max: {normalHigh} labels
+
+---
+
+## 6. DISCLAIMERS — CONSISTENT ACROSS APP
+
+Anywhere there is currently placeholder disclaimer text, replace 
+with content from the disclaimers array:
+
+- Report detail footer: disclaimers where category === "GENERAL"
+- Health score section: disclaimers where category === "HEALTH SCORE"
+- Mental health page: keep existing mental health disclaimer 
+  (that one is not in the Excel data)
+- Medicine page: keep existing medicine disclaimer
+
+---
+
+## 7. NOTHING ELSE CHANGES
+
+Do not modify:
+- Any component structure or JSX layout
+- Any CSS classes or Tailwind styling
+- Any routing or navigation
+- The mental health assessment flow
+- The medicine finder page
+- The landing page
+- The profile page
+
+Only replace data sources with real data from mockData.js.
+Wire paramDescriptions as a fallback lookup for any parameter 
+that doesn't have inline description/symptoms/measures.
+
+After making all changes, verify:
+1. /dashboard loads with Ranjeet's name and score 73
+2. /report/r1 shows all 10 test profiles from mockTestProfiles
+3. Blood Glucose card shows FBS 104.1 with symptoms and measures
+4. Serum Globulin in LFT shows as low_risk with its description
+5. /trends defaults to Fasting Blood Sugar chart with 4 data points
+6. Standardisation banner shows 5 real lab name examples
+7. Footer disclaimers come from the disclaimers array

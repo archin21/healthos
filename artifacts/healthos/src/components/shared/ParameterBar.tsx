@@ -2,47 +2,52 @@ import React from "react";
 
 interface ParameterBarProps {
   value: number;
-  min: number;
-  max: number;
+  normalLow: number;
+  normalHigh: number;
   unit: string;
 }
 
-export function ParameterBar({ value, min, max, unit }: ParameterBarProps) {
-  // Simple visualization: scale from min * 0.8 to max * 1.2
-  const lowerBound = min * 0.8;
-  const upperBound = max * 1.2;
-  const range = upperBound - lowerBound;
-  
-  let percentage = ((value - lowerBound) / range) * 100;
-  percentage = Math.max(0, Math.min(100, percentage));
-  
-  const isOutOfRange = value < min || value > max;
-  
-  const minPercent = ((min - lowerBound) / range) * 100;
-  const maxPercent = ((max - lowerBound) / range) * 100;
+export function ParameterBar({ value, normalLow, normalHigh, unit }: ParameterBarProps) {
+  const rangeSize = normalHigh - normalLow;
+  const lowerBound = normalLow > 0 ? normalLow * 0.7 : 0;
+  const upperBound = normalHigh * 1.2 + rangeSize * 0.05;
+  const totalRange = upperBound - lowerBound;
+
+  const clamp = (v: number) => Math.max(0, Math.min(100, v));
+
+  const valuePercent = clamp(((value - lowerBound) / totalRange) * 100);
+  const greenStart = clamp(((normalLow - lowerBound) / totalRange) * 100);
+  const greenWidth = clamp(((normalHigh - normalLow) / totalRange) * 100);
+  const amberWidth = clamp(((normalHigh * 1.2 - normalHigh) / totalRange) * 100);
+
+  const isLow = value < normalLow;
+  const isHigh = value > normalHigh;
+  const isVeryHigh = value > normalHigh * 1.2;
+
+  const markerColor = isVeryHigh ? "bg-red-500" : isHigh ? "bg-amber-500" : isLow ? "bg-amber-500" : "bg-green-500";
 
   return (
-    <div className="w-full mt-4">
-      <div className="relative h-4 bg-slate-100 rounded-full overflow-hidden">
-        {/* Safe zone */}
-        <div 
-          className="absolute h-full bg-green-100 border-x border-green-200"
-          style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }}
+    <div className="w-full mt-3">
+      <div className="relative h-3.5 bg-slate-100 rounded-full overflow-hidden">
+        <div
+          className="absolute h-full bg-green-200"
+          style={{ left: `${greenStart}%`, width: `${greenWidth}%` }}
         />
-        
-        {/* Value marker */}
-        <div 
-          className={`absolute h-full w-2 -ml-1 rounded-full ${isOutOfRange ? "bg-amber-500" : "bg-green-500"}`}
-          style={{ left: `${percentage}%` }}
+        <div
+          className="absolute h-full bg-amber-100"
+          style={{ left: `${greenStart + greenWidth}%`, width: `${amberWidth}%` }}
+        />
+        <div
+          className={`absolute h-full w-2 -translate-x-1/2 rounded-full shadow ${markerColor}`}
+          style={{ left: `${valuePercent}%` }}
         />
       </div>
-      <div className="flex justify-between text-xs text-slate-500 mt-2">
-        <span>{lowerBound.toFixed(1)}</span>
-        <span className="flex gap-4">
-          <span>Min: {min}</span>
-          <span>Max: {max}</span>
+      <div className="flex justify-between text-xs text-slate-400 mt-1.5">
+        <span>Min: <span className="font-medium text-slate-600">{normalLow}</span></span>
+        <span className={`font-semibold ${isLow || isHigh ? "text-amber-600" : "text-green-600"}`}>
+          {value} {unit}
         </span>
-        <span>{upperBound.toFixed(1)} {unit}</span>
+        <span>Max: <span className="font-medium text-slate-600">{normalHigh}</span></span>
       </div>
     </div>
   );

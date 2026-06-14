@@ -7,14 +7,14 @@ import { Upload, Bell, ChevronRight, ArrowUpRight, Brain, FileText, Pill } from 
 import { RiskBadge } from "@/components/shared/RiskBadge";
 
 export default function DashboardPage() {
-  const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const currentDate = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
   return (
     <AppLayout>
       <div className="p-6 max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Good morning, {mockPatient.name.split(' ')[0]}</h1>
+            <h1 className="text-2xl font-bold text-slate-900">Good morning, {mockPatient.name.split(" ")[0]}</h1>
             <p className="text-sm text-slate-500">{currentDate}</p>
           </div>
           <button
@@ -50,7 +50,7 @@ export default function DashboardPage() {
                 <Link href="/profile" className="text-sm text-sky-600 font-medium" data-testid="link-view-all">View All</Link>
               </div>
               <div className="divide-y divide-slate-100">
-                {mockReports.map((report) => (
+                {mockReports.map(report => (
                   <Link
                     key={report.id}
                     href={`/report/${report.id}`}
@@ -62,8 +62,10 @@ export default function DashboardPage() {
                         <FileText className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="font-medium text-slate-900">{report.lab} — {report.location}</p>
-                        <p className="text-xs text-slate-500">Tested on {new Date(report.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                        <p className="font-medium text-slate-900">{report.lab}</p>
+                        <p className="text-xs text-slate-500">
+                          Tested on {new Date(report.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -89,16 +91,17 @@ export default function DashboardPage() {
                   <div key={i} className="p-3 bg-amber-50 border border-amber-100 rounded-xl">
                     <div className="flex justify-between items-start mb-1">
                       <span className="text-sm font-medium text-slate-900">{alert.param}</span>
-                      <RiskBadge status="Low Risk" />
+                      <RiskBadge status={alert.risk as any} />
                     </div>
                     <p className="text-sm font-bold text-amber-700">
                       {alert.value} <span className="text-xs font-normal text-amber-600">{alert.unit}</span>
                     </p>
+                    <p className="text-xs text-slate-400 mt-0.5">Normal: {alert.normalRange}</p>
                   </div>
                 ))}
               </div>
               <Link href="/report/r1" className="block mt-3 text-xs text-sky-600 font-medium hover:text-sky-700" data-testid="link-view-full-report">
-                View Full Report
+                View Full Report →
               </Link>
             </div>
 
@@ -119,7 +122,7 @@ export default function DashboardPage() {
                   Take your first assessment
                 </Link>
               </div>
-              <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-sky-500 rounded-full blur-3xl opacity-20"></div>
+              <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-sky-500 rounded-full blur-3xl opacity-20" />
             </div>
 
             {/* Medicine Finder */}
@@ -134,7 +137,7 @@ export default function DashboardPage() {
                   <input
                     type="text"
                     placeholder="e.g. Crocin, Metformin, Atorvastatin"
-                    className="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
+                    className="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none cursor-pointer"
                     readOnly
                   />
                   <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
